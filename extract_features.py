@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 # Setup device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu") #ideally would use gpu but given the project guidelines, will use cpu here
 print("Using device:", device)
 
 # Define project paths
