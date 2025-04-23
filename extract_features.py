@@ -61,7 +61,7 @@ class XrayDataset(Dataset):
         patient_id = os.path.splitext(img_file)[0].split("_")[0]
 
         label = self.filename_to_label.get(patient_id, "No Revision Needed")
-        label = 0 if label == "No Revision Needed" else 1
+        label = 1 if revision_status > 0 else 0
 
         image = Image.open(img_path).convert('RGB')
         if self.transform:
