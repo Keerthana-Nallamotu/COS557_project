@@ -109,10 +109,10 @@ def extract_features(dataloader):
 X_train_features, y_train_labels = extract_features(train_loader)
 X_test_features, y_test_labels = extract_features(test_loader)
 
-np.save("X_train_features.npy", X_train_features.numpy())
-np.save("y_train_labels.npy", y_train_labels.numpy())
-np.save("X_test_features.npy", X_test_features.numpy())
-np.save("y_test_labels.npy", y_test_labels.numpy())
+np.save("updated_X_train_features.npy", X_train_features.numpy())
+np.save("updated_y_train_labels.npy", y_train_labels.numpy())
+np.save("updated_X_test_features.npy", X_test_features.numpy())
+np.save("updated_y_test_labels.npy", y_test_labels.numpy())
 
 print("Feature extraction complete and saved.")
 print(f"Train feature shape: {X_train_features.shape}")
