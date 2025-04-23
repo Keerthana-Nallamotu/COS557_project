@@ -12,6 +12,9 @@ y_train = np.load("y_train_labels.npy")
 X_test = np.load("X_test_features.npy")
 y_test = np.load("y_test_labels.npy")
 
+print(f"Train feature shape: {X_train.shape}")
+print(f"Test feature shape: {X_test.shape}")
+
 # might need to play around with the hidden layer and max_iter hyperparameter to get better results
 clf = MLPClassifier(hidden_layer_sizes=(128,), activation='relu', max_iter=1000)
 clf.fit(X_train, y_train)
