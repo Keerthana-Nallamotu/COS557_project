@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
 import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import PrecisionRecallDisplay
 
 # load feature extraction tables
 X_train = np.load("updated_X_train_features.npy")
@@ -45,3 +47,8 @@ print(cm)
 # More detailed per-class report
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
+
+# Precision recall curve generation
+plot = PrecisionRecallDisplay.frompredictions(y_test, y_pred)
+plot.plot()
+plt.show()
