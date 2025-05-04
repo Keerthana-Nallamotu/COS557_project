@@ -13,10 +13,16 @@ print("Using device:", device)
 metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4.csv"
 df_metadata = pd.read_csv(metadata)
 
-# extract age and race metadata
-metadata_dict = dict(zip(df_metadata["Age"], df_metadata["Race"]))
+## extract age and race metadata
+metadata_age = dict(zip(df_metadata["ID"], df_metadata["Age"]))
+metadata_race = dict(zip(df_metadata["ID"], df_metadata["Race"]))
+### ID, age, race. age is just the number, race (0 is white, 1 is black, asian is 2, hispanic is 3, multirace is 4, other/NA is 5)
 
-## ID, age, race. age is just the number, race (0 is white, 1 is black, asian is 2, hispanic is 3, multirace is 4, other/NA is 5)
+# Load revision labels
+revision = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
+df_revision = pd.read_csv(revision)
+df_revision["patient_id"] = df_revision["patient_id"].astype(str)
+revision_labels = dict(zip(df_revision["patient_id"], df_revision["revision_status"]))
 
 #X, y = make_classification(n_samples=100, random_state=1)
 #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
