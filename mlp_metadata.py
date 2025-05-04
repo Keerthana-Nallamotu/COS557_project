@@ -9,8 +9,7 @@ import torch
 metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4.csv"
 df_metadata = pd.read_csv(metadata)
 
-## extract age and race metadata
-## CAN WE DO ALL METADATA TOGETHER?
+## extract metadata of interset
 metadata_age = dict(zip(df_metadata["ID"], df_metadata["Age"]))
 #metadata_race = dict(zip(df_metadata["ID"], df_metadata["Race"]))
 ### ID, age, race. age is just the number, race (0 is white, 1 is black, asian is 2, hispanic is 3, multirace is 4, other/NA is 5)
@@ -20,6 +19,9 @@ revision = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
 df_revision = pd.read_csv(revision)
 df_revision["patient_id"] = df_revision["patient_id"].astype(str)
 revision_labels = dict(zip(df_revision["patient_id"], df_revision["revision_status"]))
+
+# Filter metadata for only patients who have revision data 
+df_metadata = df_metadata[df_metadata["ID"].isin(df_revision["patient_id"])]
 
 # train test split 
 X_train, X_test, y_train, y_test = train_test_split(
