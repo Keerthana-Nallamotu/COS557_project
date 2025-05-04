@@ -28,6 +28,8 @@ injury_col = "No history of injury/arthritis/RA/AVN=0, sports related=1, fall/fr
 df_metadata[injury_col] = df_metadata[injury_col].astype(str).str.extract(r"^(\d)")
 df_metadata = df_metadata.dropna(subset=[injury_col])
 df_metadata[injury_col] = df_metadata[injury_col].astype(int)
+
+# Injuries when > 0; otherwise, no injury
 df_metadata[injury_col] = df_metadata[injury_col].apply(lambda x: 1 if x > 0 else 0)
 
 df = df_metadata[[injury_col, "revision_label"]].dropna()
