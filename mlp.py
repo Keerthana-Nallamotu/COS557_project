@@ -51,4 +51,5 @@ print(classification_report(y_test, y_pred))
 # Precision recall curve generation
 plot = PrecisionRecallDisplay.frompredictions(y_test, y_pred)
 plot.plot()
-plt.show()
+#plt.show()
+plt.savefig("precision_recall_curve.png")
