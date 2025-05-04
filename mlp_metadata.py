@@ -14,6 +14,7 @@ metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4
 df_metadata = pd.read_csv(metadata)
 
 ## extract age and race metadata
+## CAN WE DO ALL METADATA TOGETHER?
 metadata_age = dict(zip(df_metadata["ID"], df_metadata["Age"]))
 metadata_race = dict(zip(df_metadata["ID"], df_metadata["Race"]))
 ### ID, age, race. age is just the number, race (0 is white, 1 is black, asian is 2, hispanic is 3, multirace is 4, other/NA is 5)
