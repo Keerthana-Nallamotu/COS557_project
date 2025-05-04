@@ -5,10 +5,6 @@ import numpy as np
 import os
 import torch
 
-# Set up device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Using device:", device)
-
 # Load metadata
 metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4.csv"
 df_metadata = pd.read_csv(metadata)
@@ -25,14 +21,15 @@ df_revision = pd.read_csv(revision)
 df_revision["patient_id"] = df_revision["patient_id"].astype(str)
 revision_labels = dict(zip(df_revision["patient_id"], df_revision["revision_status"]))
 
-#X, y = make_classification(n_samples=100, random_state=1)
-#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# train test split 
+X_train, X_test, y_train, y_test = train_test_split(
+    revision_labels, metadata_age, test_size=0.2, random_state=42)
 
 # load feature extraction tables
-X_train = np.load("X_train_features.npy")
-y_train = np.load("y_train_labels.npy")
-X_test = np.load("X_test_features.npy")
-y_test = np.load("y_test_labels.npy")
+#X_train = np.load("X_train_features.npy")
+#y_train = np.load("y_train_labels.npy")
+#X_test = np.load("X_test_features.npy")
+#y_test = np.load("y_test_labels.npy")
 
 print(f"Train feature shape: {X_train.shape}")
 print(f"Test feature shape: {X_test.shape}")
