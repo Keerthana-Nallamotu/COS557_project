@@ -65,7 +65,7 @@ class XrayDataset(Dataset):
 
         image = Image.open(img_path).convert('RGB')
         if self.transform:
-            image = self.transform(image)
+             image = self.transform(image)
         return image, label
 
 # Image transformations
@@ -103,6 +103,9 @@ def extract_features(dataloader):
 
     all_features = torch.cat(all_features, dim=0)
     all_labels = torch.cat(all_labels, dim=0)
+
+    print("Label distribution:", torch.bincount(all_labels))
+
     return all_features, all_labels
 
 # Extract and save
