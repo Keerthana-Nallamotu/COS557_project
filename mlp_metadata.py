@@ -13,7 +13,9 @@ print("Using device:", device)
 metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4.csv"
 df_metadata = pd.read_csv(metadata)
 
-# extract ID, age and race metadata
+# extract age and race metadata
+metadata_dict = dict(zip(df_metadata["Age"], df_metadata["Race"]))
+
 ## ID, age, race. age is just the number, race (0 is white, 1 is black, asian is 2, hispanic is 3, multirace is 4, other/NA is 5)
 
 #X, y = make_classification(n_samples=100, random_state=1)
