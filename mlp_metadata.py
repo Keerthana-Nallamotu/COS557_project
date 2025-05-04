@@ -5,13 +5,16 @@ import numpy as np
 import os
 import torch
 
-
 # Set up device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu") #ideally would use gpu but given the project guidelines, will use cpu here
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
-# Define paths
-metadata = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
+# Load metadata
+metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4.csv"
+df_metadata = pd.read_csv(metadata)
+
+# extract ID, age and race metadata
+## ID, age, race. age is just the number, race (0 is white, 1 is black, asian is 2, hispanic is 3, multirace is 4, other/NA is 5)
 
 #X, y = make_classification(n_samples=100, random_state=1)
 #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
