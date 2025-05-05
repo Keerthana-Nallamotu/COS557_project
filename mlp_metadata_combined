@@ -23,7 +23,6 @@ df_metadata = df_metadata[df_metadata["ID"].isin(df_revisions["patient_id"])]
 print(df_metadata)
 
 # extract  metadata of interest
-
 ## combine age and race columns
 df_metadata["Age"] = df_metadata["Age"].astype(str)
 df_metadata["Race (White= 0, Black= 1, Asian= 2, Hispanic= 3, More than 1= 4, Other/No report=5)"] = df_metadata["Race (White= 0, Black= 1, Asian= 2, Hispanic= 3, More than 1= 4, Other/No report=5)"].astype(str)
@@ -33,23 +32,22 @@ df_metadata["Age-Race"] = df_metadata["Age"].str.cat(df_metadata["Race (White= 0
 metadata_labels = dict(zip(df_metadata["ID"], df_metadata["Age-Race"]))
 print(metadata_labels)
 
-# train test split 
-X_train, X_test, y_train, y_test = train_test_split(
-    revision_labels, metadata_labels, test_size=0.2, random_state=42)
+# create new dataframe for ID, Age-Race, revision status
+df = df_metadata[["ID", "Age-Race"]].copy()
+df["revision_status"] = df["ID"].map(revision_labels)
 
-# load feature extraction tables
-#X_train = np.load("X_train_features.npy")
-#y_train = np.load("y_train_labels.npy")
-#X_test = np.load("X_test_features.npy")
-#y_test = np.load("y_test_labels.npy")
+X = df[["Age-Race"]].astype(str)
+y = df["revision_status"].astype(int)
 
-print(f"Train feature shape: {X_train.shape}")
-print(f"Test feature shape: {X_test.shape}")
+#### TRAIN/TEST SPLIT ####
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# might need to play around with the hidden layer and max_iter hyperparameter to get better results
-clf = MLPClassifier(hidden_layer_sizes=(128,), activation='relu', max_iter=1000)
-clf.fit(X_train, y_train)
-y_pred = clf.predict(X_test)
-from sklearn.metrics import accuracy_score
-acc = accuracy_score(y_test, y_pred)
-print(acc)
+#### MLP CLASSIFIER ####
+mlp = MLPClassifier(hidden_layer_sizes=(64,), max_iter=1000, random_state=42)
+mlp.fit(X_train, y_train)
+y_pred = mlp.predict(X_test)
+
+# Evaluation metrics
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
