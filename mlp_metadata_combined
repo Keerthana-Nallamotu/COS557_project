@@ -39,11 +39,11 @@ for index, row in df_metadata.iterrows():
   
 print(metadata_labels)
 
-# create new dataframe for ID, Age-Race, revision status
-df = df_metadata[["ID", "Age-Race"]].copy()
+# create new dataframe
+df = pd.DataFrame.from_dict(metadata_labels, orient='index').copy()
 df["revision_status"] = df["ID"].map(revision_labels)
 
-X = df[["Age-Race_Labels"]].astype(float)
+X = df.drop("revision_status", axis = 1).astype(float)
 y = df["revision_status"].astype(int)
 
 #### TRAIN/TEST SPLIT ####
