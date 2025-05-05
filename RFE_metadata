@@ -21,11 +21,16 @@ df_metadata = pd.read_csv(metadata)
 df_metadata = df_metadata[df_metadata["ID"].isin(df_revisions["patient_id"])]
 print(df_metadata)
 
+# factorize all string columns
+for column in df_metadata.select_dtypes(include = 'object').columns:
+  df_metadata[column], _ = pd.factorize(df_metdata[column])
+return df_metadata
+
 # create new dataframe 
 df = df_metadata.copy()
 df["revision_status"] = df["ID"].map(revision_labels)
 
-X = df.drop("revision_status")
+X = df.drop("revision_status", axis = 1)
 y = df["revision_status"].astype(int)
 
 estimator = SVR(kernel="linear")
