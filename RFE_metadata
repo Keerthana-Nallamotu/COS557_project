@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from sklearn.svm import SVR
 from sklearn.feature_selection import RFE
+from sklearn.impute import SimpleImputer
 
 # Load revision labels
 revisions_path = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
@@ -29,8 +30,10 @@ for column in df_metadata.select_dtypes(include = 'object').columns:
 df = df_metadata.copy()
 df["revision_status"] = df["ID"].map(revision_labels)
 
-## remove NaNs
-df = df.dropna()
+## impute NaNs
+imputer = SimpleImputer(missing_values=np.nan, strategy='mean') 
+imputer.fit(df)
+df = imputer.transform(df)
 
 X = df.drop("revision_status", axis = 1)
 y = df["revision_status"].astype(int)
