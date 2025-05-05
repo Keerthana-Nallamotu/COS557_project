@@ -2,15 +2,22 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 import numpy as np
+import pandas as pd
 import os
 
 # Load metadata
 metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4.csv"
 df_metadata = pd.read_csv(metadata)
 
-## extract  metadata of interest
-df_metadata = dict(zip(df_metadata["ID"], list[df_metadata["Age"], df_metadata["Race"]]))
-print(df_metadata)
+# extract  metadata of interest
+## combine age and race columns
+df_metadata["Age"] = df_metadata["Age"].astype(str)
+df_metadata["Race (White= 0, Black= 1, Asian= 2, Hispanic= 3, More than 1= 4, Other/No report=5)"] = df_metadata["Race (White= 0, Black= 1, Asian= 2, Hispanic= 3, More than 1= 4, Other/No report=5)"].astype(str)
+
+df_metadata["Age-Race"] = df_metadata["Age"].str.cat(df_metadata["Race (White= 0, Black= 1, Asian= 2, Hispanic= 3, More than 1= 4, Other/No report=5)"], sep = '-')
+
+metadata_labels = dict(zip(df_metadata["ID"], df_metadata["Age-Race"]))
+print(metadata_labels)
 
 # Load revision labels
 revision = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
@@ -24,7 +31,7 @@ print(df_metadata)
 
 # train test split 
 X_train, X_test, y_train, y_test = train_test_split(
-    revision_labels, metadata_age, test_size=0.2, random_state=42)
+    revision_labels, metadata_labels, test_size=0.2, random_state=42)
 
 # load feature extraction tables
 #X_train = np.load("X_train_features.npy")
