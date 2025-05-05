@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
 import os
+from pandas.api.types import CategoricalDtype 
 
 # Load revision labels
 revisions_path = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
@@ -36,7 +37,10 @@ print(metadata_labels)
 df = df_metadata[["ID", "Age-Race"]].copy()
 df["revision_status"] = df["ID"].map(revision_labels)
 
-X = df[["Age-Race"]].astype(str)
+## factorize Age-Race 
+df["Age-Race_Labels"], uniques = pd.factorize(df["Age-Race"])
+
+X = df[["Age-Race_Labels"]].astype(float)
 y = df["revision_status"].astype(int)
 
 #### TRAIN/TEST SPLIT ####
