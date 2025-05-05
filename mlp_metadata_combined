@@ -40,11 +40,11 @@ for index, row in df_metadata.iterrows():
 print(metadata_labels)
 
 # create new dataframe
-df = pd.DataFrame.from_dict(metadata_labels, orient='index').copy()
+df = df_metadata["ID", "Age", "Race (White= 0, Black= 1, Asian= 2, Hispanic= 3, More than 1= 4, Other/No report=5)", "sex (m=0, f=1)", "BMI"].copy()
 df["revision_status"] = df["ID"].map(revision_labels)
 
-X = df.drop("revision_status", axis = 1).astype(float)
-y = df["revision_status"].astype(int)
+X = metadata_labels
+y = revision_labels
 
 #### TRAIN/TEST SPLIT ####
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
