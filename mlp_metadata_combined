@@ -5,11 +5,25 @@ import numpy as np
 import pandas as pd
 import os
 
+# Load revision labels
+revisions_path = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
+df_revisions = pd.read_csv(revisions_path)
+df_revisions["patient_id"] = df_revisions["patient_id"].astype(int)
+df_revisions = df_revisions.sort_values(by=["patient_id", "postop_days"])
+df_revisions = df_revisions.drop_duplicates(subset=["patient_id"], keep="last")
+revision_labels = dict(zip(df_revisions["patient_id"], df_revisions["revision_status"]))
+revision_labels = {pid: 1 if status > 0 else 0 for pid, status in revision_labels.items()}
+
 # Load metadata
 metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4.csv"
 df_metadata = pd.read_csv(metadata)
 
+# Filter metadata for patients who have revision data
+df_metadata = df_metadata[df_metadata["ID"].isin(df_revisions["patient_id"])]
+print(df_metadata)
+
 # extract  metadata of interest
+
 ## combine age and race columns
 df_metadata["Age"] = df_metadata["Age"].astype(str)
 df_metadata["Race (White= 0, Black= 1, Asian= 2, Hispanic= 3, More than 1= 4, Other/No report=5)"] = df_metadata["Race (White= 0, Black= 1, Asian= 2, Hispanic= 3, More than 1= 4, Other/No report=5)"].astype(str)
@@ -18,16 +32,6 @@ df_metadata["Age-Race"] = df_metadata["Age"].str.cat(df_metadata["Race (White= 0
 
 metadata_labels = dict(zip(df_metadata["ID"], df_metadata["Age-Race"]))
 print(metadata_labels)
-
-# Load revision labels
-revision = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
-df_revision = pd.read_csv(revision)
-df_revision["patient_id"] = df_revision["patient_id"].astype(str)
-revision_labels = dict(zip(df_revision["patient_id"], df_revision["revision_status"]))
-
-# Filter metadata for only patients who have revision data 
-df_metadata = df_metadata[df_metadata["ID"].isin(df_revision["patient_id"])]
-print(df_metadata)
 
 # train test split 
 X_train, X_test, y_train, y_test = train_test_split(
