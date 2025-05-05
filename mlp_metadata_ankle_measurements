@@ -25,6 +25,17 @@ df_metadata = pd.read_csv(metadata)
 df_metadata = df_metadata[df_metadata["ID"].isin(df_revisions["patient_id"])]
 print(df_metadata)
 
+# Factorize non-integer columns
+columns = ["Type of TAR Implant used during surgery (Cadence= 0, Salto talaris= 1, Inbone=2, Infinity=3, STAR=4, TM= 5, Other=6) ",
+"Post Op ROM 2 week Dorsiflexion (nl=20 deg); Plantarflexion (nl=40deg)", 
+"PostOp ROM 6 week Dorsiflexion (nl=20 deg); Plantarflexion (nl=40deg)", 
+"PostOp ROM 3month Dorsiflexion (nl=20 deg); Plantarflexion (nl=40deg)", 
+"PostOp ROM 6 month Dorsiflexion (nl=20 deg); Plantarflexion (nl=40deg)", 
+"PostOp ROM 12 month Dorsiflexion (nl=20 deg); Plantarflexion (nl=40deg)"]
+
+for col in columns: 
+  df_metadata[col], _ = pd.factorize(df_metadata[col])
+
 # create new dataframe
 df = df_metadata[["ID", 
 "Type of TAR Implant used during surgery (Cadence= 0, Salto talaris= 1, Inbone=2, Infinity=3, STAR=4, TM= 5, Other=6) ",
