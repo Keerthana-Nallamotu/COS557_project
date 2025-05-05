@@ -1,8 +1,35 @@
-from sklearn.neural_network import MLPClassifier
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import numpy as np
 import pandas as pd
 import os
+from sklearn.svm import SVR
+from sklearn.feature_selection import RFE
 
+# Load revision labels
+revisions_path = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
+df_revisions = pd.read_csv(revisions_path)
+df_revisions["patient_id"] = df_revisions["patient_id"].astype(int)
+df_revisions = df_revisions.sort_values(by=["patient_id", "postop_days"])
+df_revisions = df_revisions.drop_duplicates(subset=["patient_id"], keep="last")
+revision_labels = dict(zip(df_revisions["patient_id"], df_revisions["revision_status"]))
+revision_labels = {pid: 1 if status > 0 else 0 for pid, status in revision_labels.items()}
+
+# Load metadata
+metadata = "/data/home/cos557/data/rothman/TAR_Sheet_fo_stats_SGP_7_9_24_output4.csv"
+df_metadata = pd.read_csv(metadata)
+
+# Filter metadata for patients who have revision data
+df_metadata = df_metadata[df_metadata["ID"].isin(df_revisions["patient_id"])]
+print(df_metadata)
+
+# create new dataframe 
+df = df_metadata.copy()
+df["revision_status"] = df["ID"].map(revision_labels)
+
+X = df.drop("revision_status")
+y = df["revision_status"].astype(int)
+
+estimator = SVR(kernel="linear")
+selector = RFE(estimator, n_features_to_select=5, step=1)
+selector = selector.fit(X, y)
+selector.support_
+selector.ranking_
