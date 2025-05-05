@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import os
 from pandas.api.types import CategoricalDtype 
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 # Load revision labels
 revisions_path = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
