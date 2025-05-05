@@ -23,15 +23,18 @@ print(df_metadata)
 
 # factorize all string columns
 for column in df_metadata.select_dtypes(include = 'object').columns:
-  df_metadata[column], _ = pd.factorize(df_metdata[column])
-return df_metadata
+  df_metadata[column], _ = pd.factorize(df_metadata[column])
 
 # create new dataframe 
 df = df_metadata.copy()
 df["revision_status"] = df["ID"].map(revision_labels)
 
+## remove NaNs
+df = df.dropna()
+
 X = df.drop("revision_status", axis = 1)
 y = df["revision_status"].astype(int)
+
 
 estimator = SVR(kernel="linear")
 selector = RFE(estimator, n_features_to_select=5, step=1)
