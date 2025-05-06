@@ -1,0 +1,81 @@
+import os
+import numpy as np
+import pandas as pd
+import torch
+import torchvision.models as models
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader, Dataset
+from PIL import Image
+from tqdm import tqdm
+from collections import defaultdict
+
+# Set up device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu") #ideally would use gpu but given the project guidelines, will use cpu here
+print("Using device:", device)
+
+# Define paths
+image_folder = "/data/home/cos557/data/rothman/images"
+label_csv = "/data/home/cos557/data/rothman/parsed_xray_files_log.csv"
+
+# Load image filenames
+all_image_files = sorted(os.listdir(image_folder))
+print(f"Found {len(all_image_files)} images.")
+
+# Load revision labels
+df_labels = pd.read_csv(label_csv)
+df_labels["patient_id"] = df_labels["patient_id"].astype(str)
+filename_to_label = dict(zip(df_labels["patient_id"], df_labels["revision_status"]))
+
+# Group images by patient_id
+patient_to_images = defaultdict(list)
+for img_file in all_image_files:
+    patient_id = os.path.splitext(img_file)[0].split("_")[0]
+    patient_to_images[patient_id].append(img_file)
+
+# Patient-level train/test split
+all_patients = sorted(patient_to_images.keys())
+np.random.seed(42)
+np.random.shuffle(all_patients)
+
+split = int(len(all_patients) * 0.8)
+train_patients = set(all_patients[:split])
+test_patients = set(all_patients[split:])
+
+train_files = [img for pid in train_patients for img in patient_to_images[pid]]
+test_files = [img for pid in test_patients for img in patient_to_images[pid]]
+
+# Custom PyTorch Dataset
+class XrayDataset(Dataset):
+    def __init__(self, image_folder, image_files, filename_to_label, transform=None):
+        self.image_folder = image_folder
+        self.image_files = image_files
+        self.filename_to_label = filename_to_label
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.image_files)
+
+    def __getitem__(self, idx):
+        img_file = self.image_files[idx]
+        img_path = os.path.join(self.image_folder, img_file)
+        patient_id = os.path.splitext(img_file)[0].split("_")[0]
+
+        revision_count = self.filename_to_label.get(patient_id, 0)
+        label = 1 if int(revision_count) > 0 else 0
+
+        image = Image.open(img_path).convert('RGB')
+        if self.transform:
+             image = self.transform(image)
+        return image, label
+
+# Image transformations
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+])
+
+# Create datasets and loaders
+train_dataset = XrayDataset(image_folder, train_files, filename_to_label, transform)
+test_dataset = XrayDataset(image_folder, test_files, filename_to_label, transform)
+
+
