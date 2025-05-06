@@ -23,20 +23,18 @@ revision_labels = dict(zip(df_revision["patient_id"], df_revision["revision_stat
 # Filter metadata for only patients who have revision data 
 df_metadata = df_metadata[df_metadata["ID"].isin(df_revision["patient_id"])]
 
+# Create new dataframe for age
+df = df_metadata[["ID", "Age"]].copy()
+df["revision_status"] = df["ID"].map(revision_labels)
+
+X = df[["Age"]].astype(float)
+y = df["revision_status"].astype(int)
+
 # train test split 
 X_train, X_test, y_train, y_test = train_test_split(
-    revision_labels, metadata_age, test_size=0.2, random_state=42)
+    X, y, test_size=0.2, random_state=42)
 
-# load feature extraction tables
-#X_train = np.load("X_train_features.npy")
-#y_train = np.load("y_train_labels.npy")
-#X_test = np.load("X_test_features.npy")
-#y_test = np.load("y_test_labels.npy")
-
-print(f"Train feature shape: {X_train.shape}")
-print(f"Test feature shape: {X_test.shape}")
-
-# might need to play around with the hidden layer and max_iter hyperparameter to get better results
+# MLP classifier
 clf = MLPClassifier(hidden_layer_sizes=(128,), activation='relu', max_iter=1000)
 clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
