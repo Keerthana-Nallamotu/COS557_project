@@ -79,10 +79,32 @@ transform = transforms.Compose([
     transforms.ToTensor(),
 ])
 
-# Create datasets and loaders
+# Create datasets 
 train_dataset = XrayDataset(image_folder, train_files, filename_to_label, transform)
 test_dataset = XrayDataset(image_folder, test_files, filename_to_label, transform)
 
+# Filter metadata for patients who have revision data 
+df_metadata = df_metadata[df_metadata["ID"].isin(df_revisions["patient_id"])]
+
+# Training dataframe based on age
+df = df_metadata[["ID", "Age"]].copy()
+df["revision_status"] = df["ID"].map(revision_labels)
+
+X = df[["Age"]].astype(float)
+y = df["revision_status"].astype(int)
+
+#### TRAIN/TEST SPLIT ####
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+#### MLP CLASSIFIER ####
+mlp = MLPClassifier(hidden_layer_sizes=(64,), max_iter=1000, random_state=42)
+mlp.fit(X_train, y_train)
+y_pred = mlp.predict(X_test)
+
+# Evaluation metrics
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
 
 # MLP
 clf = MLPClassifier(hidden_layer_sizes=(128,), activation='relu', max_iter=1000)
