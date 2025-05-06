@@ -83,9 +83,30 @@ transform = transforms.Compose([
 train_dataset = XrayDataset(image_folder, train_files, filename_to_label, transform)
 test_dataset = XrayDataset(image_folder, test_files, filename_to_label, transform)
 
+# Feature extraction function
+def extract_features(dataloader):
+    all_features = []
+    all_labels = []
+
+    with torch.no_grad():
+        for images, labels in tqdm(dataloader, desc="Extracting Features"):
+            images = images.to(device)
+            #features = vgg(images)
+            #features = torch.flatten(features, start_dim=1)
+
+            all_features.append(features.cpu())
+            all_labels.append(labels)
+
+    all_features = torch.cat(all_features, dim=0)
+    all_labels = torch.cat(all_labels, dim=0)
+
+    print("Label distribution:", torch.bincount(all_labels))
+
+    return all_features, all_labels
+
 # Extract and save
-X_train, y_train = train_dataset
-X_test, y_test = test_dataset
+X_train, y_train = extract_features(train_loader)
+X_test, y_test = extract_features(test_loader)
 
 np.save("X_train.npy", X_train.numpy())
 np.save("y_train.npy", y_train.numpy())
