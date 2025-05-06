@@ -98,7 +98,7 @@ def extract_features(dataloader):
             #features = vgg(images)
             #features = torch.flatten(features, start_dim=1)
 
-            all_features.append(features.cpu())
+            all_features.append(images.cpu())
             all_labels.append(labels)
 
     all_features = torch.cat(all_features, dim=0)
