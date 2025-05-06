@@ -83,11 +83,16 @@ transform = transforms.Compose([
 train_dataset = XrayDataset(image_folder, train_files, filename_to_label, transform)
 test_dataset = XrayDataset(image_folder, test_files, filename_to_label, transform)
 
-# split into X and Y test and train
-X_train = 
-X_test =
-y_test = 
-y_train = 
+# Extract and save
+X_train, y_train = train_dataset
+X_test, y_test = test_dataset
+
+np.save("X_train.npy", X_train.numpy())
+np.save("y_train.npy", y_train.numpy())
+np.save("X_test.npy", X_test.numpy())
+np.save("y_test.npy", y_test.numpy())
+
+
 
 #### MLP CLASSIFIER ####
 mlp = MLPClassifier(hidden_layer_sizes=(64,), max_iter=1000, random_state=42)
