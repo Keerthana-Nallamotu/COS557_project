@@ -92,8 +92,6 @@ np.save("y_train.npy", y_train.numpy())
 np.save("X_test.npy", X_test.numpy())
 np.save("y_test.npy", y_test.numpy())
 
-
-
 #### MLP CLASSIFIER ####
 mlp = MLPClassifier(hidden_layer_sizes=(64,), max_iter=1000, random_state=42)
 mlp.fit(X_train, y_train)
